@@ -1,0 +1,206 @@
+<ngx-spinner>
+  <p style="font-size: 20px; color: white">{{loaderSpinnerMessage}}</p>
+</ngx-spinner>
+<section class="login-block">
+  <div class="container">
+    <div class="row">
+      <div *ngIf="loginOption" class="col-md-4 login-sec">
+        <h2 class="text-center">Login Now</h2>
+        <div class="form-check text-center">
+          <button type="submit" (click)="[isEmployee=false, showSection('adminUserLogin')]"
+            class="btn btn-login float-center">Admin/User</button>
+        </div>
+        <div class="form-check text-center">
+          <button type="submit" (click)="[isEmployee=true, showSection('employeeLogin')]"
+            class="btn btn-login float-center">Employee</button>
+        </div>
+        <div class="or-seperator"><i>or</i></div>
+        <div class="form-check text-center">
+          <button type="button" (click)="[isGoogleLogin=true, isEmployee=false, signInWithGoogle()]"
+            class="btn btn-danger google btn-block"><i class="fa fa-google"></i> Login With
+            Google</button>
+        </div>
+      </div>
+      <div *ngIf="adminUserLogin || employeeLogin" class="col-md-4 login-sec">
+        <h2 *ngIf="adminUserLogin" class="text-center">Login as Admin/User</h2>
+        <h2 *ngIf="employeeLogin" class="text-center">Login as Employee</h2>
+        <form class="login-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+          <div class="form-group">
+            <label for="InputEmail" class="text-uppercase">Email</label>
+            <input class="form-control" matInput formControlName="email" required>
+            <mat-error *ngIf="isFieldInvalid('email')">
+              Please insert your email
+            </mat-error>
+          </div>
+          <div class="form-group">
+            <label for="InputPassword" class="text-uppercase">Password</label>
+            <div class="input-group">
+              <input matInput [type]="fieldTextType ? 'text' : 'password'" class="form-control"
+                formControlName="password" required>
+              <div class="input-group-append set-bg">
+                <span class="input-group-text">
+                  <i class="fa" [ngClass]="{
+							'fa-eye-slash': !fieldTextType,
+							'fa-eye': fieldTextType
+						  }" (click)="toggleFieldTextType()"></i>
+                </span>
+              </div>
+            </div>
+            <mat-error *ngIf="isFieldInvalid('password')">
+              Please insert your password
+            </mat-error>
+          </div>
+          <div class="form-check">
+            <button type="submit" class="btn btn-login float-right">Submit</button>
+            <button type="button" (click)="[formSubmitAttempt=false, showSection('loginOption')]"
+              class="btn btn-light float-right">&laquo;
+              Previous</button>
+            <span *ngIf="employeeLogin" class="float-left mt-3">
+              <a [routerLink]="" (click)="[showSection('employeeFirstLogin'), showFormSection('showEmail')]">First
+                time login?</a>
+            </span>
+          </div>
+        </form>
+      </div>
+      <div *ngIf="employeeFirstLogin" class="col-md-4 login-sec">
+        <h2 class="text-center">Employee First Login</h2>
+        <form class="login-form" [formGroup]="formNewEmployee" (ngSubmit)="onSubmitNewEmployee()">
+          <div class="form-group" *ngIf="showEmail">
+            <label for="InputEmail" class="text-uppercase">Email</label>
+            <input class="form-control" matInput formControlName="email" required>
+            <mat-error *ngIf="isFieldInvalidNewEmployee('email')">
+              Please insert your email
+            </mat-error>
+          </div>
+          <div class="form-group" *ngIf="showBranch">
+            <label for="InputEmail" class="text-uppercase">Select Branch</label>
+            <select formControlName="branch" class="form-control">
+              <option value="">Please select</option>
+              <ng-container *ngFor="let branch of branches">
+                <option [ngValue]="branch">{{branch.name + ' (' + branch.city + ', ' + branch.state + ' )'}}
+                </option>
+              </ng-container>
+            </select>
+            <mat-error *ngIf="isFieldInvalidNewEmployee('branch')">
+              Please select branch
+            </mat-error>
+          </div>
+          <div class="form-group" *ngIf="showContact">
+            <label for="InputContact" class="text-uppercase">Enter 10 Digits Contact Number</label>
+            <input class="form-control" matInput type="number" maxlength="10" formControlName="contact" required>
+            <mat-error *ngIf="isFieldInvalidNewEmployee('contact')">
+              Please enter your contact
+            </mat-error>
+          </div>
+          <div class="form-group" *ngIf="showOtp">
+            <label for="InputContact" class="text-uppercase">Otp</label>
+            <input class="form-control" matInput type="number" maxlength="4" formControlName="otp" required>
+            <mat-error *ngIf="isFieldInvalidNewEmployee('otp')">
+              Otp is required
+            </mat-error>
+            <a [routerLink]="" (click)="sendOtp()" class="float-right">Resend otp?</a>
+          </div>
+          <div class="form-group" *ngIf="showPassword">
+            <label>Create Password</label>
+            <div class="input-group">
+              <input [type]="fieldTextType ? 'text' : 'password'" formControlName="password" class="form-control" />
+              <div class="input-group-append set-bg">
+                <span class="input-group-text">
+                  <i class="fa" [ngClass]="{
+                'fa-eye-slash': !fieldTextType,
+                'fa-eye': fieldTextType
+                }" (click)="toggleFieldTextType()"></i>
+                </span>
+              </div>
+            </div>
+            <mat-error *ngIf="isFieldInvalidNewEmployee('password')">
+              Password is required
+            </mat-error>
+          </div>
+          <div class="form-group" *ngIf="showPassword">
+            <label>Confirm Password</label>
+            <input type="password" formControlName="confirmPassword" class="form-control" />
+            <mat-error *ngIf="isFieldInvalidNewEmployee('confirmPassword')">
+              <div *ngIf="formNewEmployee.value.confirmPassword==''">Confirm Password is required</div>
+              <div
+                *ngIf="formNewEmployee.value.confirmPassword && formNewEmployee.value.password!==formNewEmployee.value.confirmPassword">
+                Passwords must match</div>
+            </mat-error>
+          </div>
+          <div class="form-group mt-5">
+            <button type="submit" class="btn btn-login float-right">{{employeeFirstLoginButton}}</button>
+            <button type="button"
+              (click)="[formSubmitAttempt=false, formSubmitAttemptNewEmployee=false, showSection('employeeLogin')]"
+              class="btn btn-light float-right">&laquo;
+              Previous</button>
+          </div>
+        </form>
+      </div>
+      <div *ngIf="socialFirstLogin" class="col-md-4 login-sec">
+        <h2 class="text-center">Social First Time Login</h2>
+        <form class="login-form" [formGroup]="formSocialLogin" (ngSubmit)="onSubmitSocialLogin()">
+          <div class="form-group" *ngIf="showEmail">
+            <label for="InputEmail" class="text-uppercase">Email</label>
+            <input class="form-control" matInput formControlName="email" [readonly]="true" required>
+            <mat-error *ngIf="isFieldInvalidSocialLogin('email')">
+              Please insert your email
+            </mat-error>
+          </div>
+          <div class="form-group" *ngIf="showBranch">
+            <label for="InputBranch" class="text-uppercase">Select Branch</label>
+            <select formControlName="branch" class="form-control">
+              <option value="">Please select</option>
+              <ng-container *ngFor="let branch of branches">
+                <option [ngValue]="branch">{{branch.name + ' (' + branch.city + ', ' + branch.state + ' )'}}
+                </option>
+              </ng-container>
+            </select>
+            <mat-error *ngIf="isFieldInvalidSocialLogin('branch')">
+              Please select branch
+            </mat-error>
+          </div>
+          <div class="form-group" *ngIf="showContact">
+            <label for="InputContact" class="text-uppercase">Enter 10 Digits Contact Number</label>
+            <input class="form-control" matInput type="number" maxlength="10" formControlName="contact" required>
+            <mat-error *ngIf="isFieldInvalidSocialLogin('contact')">
+              Please enter your contact
+            </mat-error>
+          </div>
+          <div class="form-group" *ngIf="showOtp">
+            <label for="InputContact" class="text-uppercase">Otp</label>
+            <input class="form-control" matInput type="number" maxlength="4" formControlName="otp" required>
+            <mat-error *ngIf="isFieldInvalidSocialLogin('otp')">
+              Otp is required
+            </mat-error>
+            <a [routerLink]="" (click)="sendOtp()" class="float-right">Resend otp?</a>
+          </div>
+          <div class="form-group mt-5">
+            <button type="submit" class="btn btn-login float-right">{{employeeFirstLoginButton}}</button>
+            <button type="button"
+              (click)="[formSubmitAttempt=false, formSubmitAttemptNewEmployee=false, formSubmitAttemptSocialLogin=false, showSection('loginOption')]"
+              class="btn btn-light float-right">&laquo;
+              Previous</button>
+          </div>
+        </form>
+      </div>
+      <div class="col-md-8">
+        <div id="carouselExampleIndicators" class="carousel slide mt-2" data-ride="carousel">
+          <ol class="carousel-indicators">
+            <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+            <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+          </ol>
+          <div class="carousel-inner" role="listbox">
+            <div class="carousel-item active">
+              <img class="d-block img-fluid" src="assets/img/login1.jpg" alt="First slide">
+            </div>
+            <div class="carousel-item">
+              <img class="d-block img-fluid" src="assets/img/login2.jpg" alt="First slide">
+            </div>
+            <div class="carousel-item">
+              <img class="d-block img-fluid" src="assets/img/login3.jpg" alt="First slide">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>

@@ -1,0 +1,159 @@
+<ngx-spinner>
+  <p style="font-size: 20px; color: white">{{loaderSpinnerMessage}}</p>
+</ngx-spinner>
+<div class="main-content mt-4">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-info">
+            <button type="button" class="btn-xs float-right" data-toggle="tooltip" data-placement="top" title="Back"
+              (click)="backClicked()">
+              <i class="material-icons">arrow_back</i>
+            </button>
+            <h4 class="card-title ">{{websiteConstants.newBranch}}</h4>
+            <!-- <p class="card-category"> User Listing</p> -->
+          </div>
+          <div class="card-body">
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+              <div class="form-row">
+                <div class="form-group col-6" *ngIf="currentUserRole.name=='superadmin'">
+                  <label for="company">Company</label>
+                  <select formControlName="company" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f.company.errors }">
+                    <option value="">Please select</option>
+                    <option *ngFor="let company of companies" [ngValue]="company._id">{{company.name}}</option>
+                  </select>
+                  <div *ngIf="submitted && f.company.errors" class="invalid-feedback">
+                    <div *ngIf="f.company.errors.required">Company is required</div>
+                  </div>
+                </div>
+                <div class="form-group col-6">
+                  <label for="status">Status</label>
+                  <select formControlName="active" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f.active.errors }">
+                    <option value="">Please select</option>
+                    <option value="true">Active</option>
+                    <option value="false">Deactive</option>
+                  </select>
+                  <div *ngIf="submitted && f.active.errors" class="invalid-feedback">
+                    <div *ngIf="f.active.errors.required">Status is required</div>
+                  </div>
+                </div>
+                <div class="form-group col-6">
+                  <label>Account Expiry Date</label>
+                  <input type="date" formControlName="accountExpiryDate" [min]="minDate" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f.accountExpiryDate.errors }" />
+                  <div *ngIf="submitted && f.accountExpiryDate.errors" class="invalid-feedback">
+                    <div *ngIf="f.accountExpiryDate.errors.required">Account expiry date is required</div>
+                  </div>
+                </div>
+                <div class="form-group col-6">
+                  <label for="status">Account Plan</label>
+                  <select formControlName="accountPlan" class="form-control"
+                    (change)="isCustomPlanVisible(form.value.accountPlan)"
+                    [ngClass]="{ 'is-invalid': submitted && f.accountPlan.errors }">
+                    <option value="">Please select</option>
+                    <option value="custom">Custom</option>
+                    <option value="unlimited">Unlimited</option>
+                  </select>
+                  <div *ngIf="submitted && f.accountPlan.errors" class="invalid-feedback">
+                    <div *ngIf="f.accountPlan.errors.required">Please select account plan</div>
+                  </div>
+                </div>
+                <div *ngIf="showCustomPlan" class="form-group col-6">
+                  <label for="status">Custom Plan Value</label>
+                  <input type="number" min="1" formControlName="customPlanValue" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f.customPlanValue.errors }" />
+                  <div *ngIf="submitted && f.customPlanValue.errors" class="invalid-feedback">
+                    <div *ngIf="f.customPlanValue.errors.required">Please enter custom account value</div>
+                  </div>
+                </div>
+                <div class="form-group col-6">
+                  <label>Name</label>
+                  <input type="text" formControlName="name" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f.name.errors }" />
+                  <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                    <div *ngIf="f.name.errors.required">Name is required</div>
+                  </div>
+                </div>
+                <div class="form-group col-6">
+                  <label>Email</label>
+                  <input type="text" formControlName="email" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
+                  <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                    <div *ngIf="f.email.errors.required">Email is required</div>
+                    <div *ngIf="f.email.errors.email">Email must be a valid email address</div>
+                  </div>
+                </div>
+                <div class="form-group col-6">
+                  <label>Contact</label>
+                  <input type="text" formControlName="contact" class="form-control" />
+                </div>
+                <div class="form-group col-6">
+                  <label>Address</label>
+                  <input type="text" formControlName="address" class="form-control" />
+                </div>
+                <div class="form-group col-6">
+                  <label>City</label>
+                  <input type="text" formControlName="city" class="form-control" />
+                </div>
+                <div class="form-group col-6">
+                  <label>State</label>
+                  <input type="text" formControlName="state" class="form-control" />
+                </div>
+                <div class="form-group col-6">
+                  <label>Zip</label>
+                  <input type="text" formControlName="zip" class="form-control" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-12">
+                  <div class="custom-control form-control-lg custom-checkbox">
+                    <input type="checkbox" formControlName="isVisitorApproval" class="custom-control-input"
+                      id="visitorApproval">
+                    <label class="custom-control-label" for="visitorApproval">Visitor approval by
+                      host/employee</label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-12">
+                  <div class="custom-control form-control-lg custom-checkbox">
+                    <input type="checkbox" formControlName="isTouchless" class="custom-control-input" id="isTouchless">
+                    <label class="custom-control-label" for="isTouchless">Touchless</label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-12">
+                  <div class="custom-control form-control-lg custom-checkbox">
+                    <input type="checkbox" formControlName="isGovernmentIdUpload" class="custom-control-input"
+                      id="isGovernmentIdUpload">
+                    <label class="custom-control-label" for="isGovernmentIdUpload">Government Id Upload</label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-12">
+                  <div class="custom-control form-control-lg custom-checkbox">
+                    <input type="checkbox" formControlName="isItemImageUpload" class="custom-control-input"
+                      id="isItemImageUpload">
+                    <label class="custom-control-label" for="isItemImageUpload">Item Image Upload</label>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-12">
+                  <button type="reset" class="btn btn-secondary float-right" *ngIf=" 'users' | permission: 'create'"
+                    (click)="onReset()">Clear</button>
+                  <button class="btn btn-info float-right" *ngIf=" 'users' | permission: 'create'">Submit</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

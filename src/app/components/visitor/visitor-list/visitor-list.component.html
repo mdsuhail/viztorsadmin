@@ -1,0 +1,235 @@
+<ngx-spinner>
+  <p style="font-size: 20px; color: white">{{loaderSpinnerMessage}}</p>
+</ngx-spinner>
+<div [ngClass]="{'main-content': !latestSigninDetail.showLatest}">
+  <div [ngClass]="{'container-fluid': !latestSigninDetail.showLatest}">
+
+    <div class="row">
+      <div class="col-md-12">
+        <form [formGroup]="form" (ngSubmit)="getVisitorsList()">
+          <div class="form-row">
+            <div class="form-group col-2">
+              <input type="text" placeholder="From" onfocus="(this.type='date')" onfocusout="(this.type='text')"
+                formControlName="start" class="form-control" />
+            </div>
+            <div class="form-group col-2">
+              <input type="text" placeholder="To" onfocus="(this.type='date')" onfocusout="(this.type='text')"
+                formControlName="end" class="form-control" />
+            </div>
+            <div class="form-group col-2">
+              <select formControlName="type" class="form-control">
+                <option value="">Select Type</option>
+                <option value="signin">Check-in</option>
+                <option value="signout">Check-out</option>
+              </select>
+            </div>
+            <div class="form-group col-2" *ngIf="currentUserRole.name !== 'employee'">
+              <select formControlName="department" class="form-control">
+                <option value="">Select Department</option>
+                <option *ngFor="let department of departments" [ngValue]="department._id">{{department.name}}</option>
+              </select>
+            </div>
+            <div class="form-group col-2" *ngIf="currentUserRole.name !== 'employee'">
+              <select formControlName="employee" class="form-control">
+                <option value="">Select Employee</option>
+                <option *ngFor="let employee of employees" [ngValue]="employee._id">
+                  {{employee.firstname}} {{employee.lastname}}</option>
+              </select>
+            </div>
+            <div class="form-group col-1">
+              <!-- <button class="btn btn-primary btn-sm float-right form-control">{{websiteConstants.buttonSearch}}</button> -->
+              <button class="btn btn-info btn-sm form-control" data-toggle="tooltip" data-placement="top"
+                title="Search"><i class="material-icons">search</i></button>
+            </div>
+            <div class="form-group col-1">
+              <!-- <button type="reset" (click)="onResetForm()" class="btn btn-primary btn-sm float-right form-control">{{websiteConstants.buttonClear}}</button> -->
+              <button type="reset" (click)="onResetForm()" class="btn btn-info btn-sm form-control"
+                data-toggle="tooltip" data-placement="top" title="Clear"><i class="material-icons">clear</i></button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="col-lg-12">
+        <button type="button" *ngIf="currentUserRole.name==='employee'" [routerLink]="['/visitor/preapproved']"
+          routerLinkActive="router-link-active"
+          class="btn btn-info float-right">{{websiteConstants.createPreApprovedVisitor}}</button>
+        <button type="button" *ngIf="platform.isBrowser && currentUserRole.name!=='employee'"
+          (click)="redirectCheckin()" routerLinkActive="router-link-active"
+          class="btn btn-info float-right">{{websiteConstants.checkinVisitor}}</button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header"
+            [ngClass]="!latestSigninDetail.showLatest ? 'card-header-info' : 'card-header-primary'">
+            <button type="button" class="btn-xs float-right" *ngIf="!latestSigninDetail.showLatest"
+              data-toggle="tooltip" data-placement="top" title="Back" (click)="backClicked()">
+              <i class="material-icons">arrow_back</i>
+            </button>
+            <button type="button" class="btn-xs float-right mr-1" data-toggle="tooltip" data-placement="top"
+              title="Refresh" (click)="getVisitorsList()">
+              <i class="material-icons">refresh</i>
+            </button>
+            <button type="button" class="btn-xs float-right mr-1" *ngIf="!latestSigninDetail.showLatest"
+              data-toggle="tooltip" data-placement="top" title="Export List"
+              (click)="exportList('export-visitors-table','Visitors')">
+              <i class="material-icons">cloud_download</i>
+            </button>
+            <h4 class="card-title">
+              <span *ngIf="latestSigninDetail.showLatest; else listTitle">
+                {{websiteConstants.latestSigninVisitor}}
+              </span>
+              <ng-template #listTitle>
+                <span>{{websiteConstants.visitorList}}</span>
+              </ng-template>
+            </h4>
+            <p *ngIf="latestSigninDetail.showLatest" class=" card-category">
+              {{websiteConstants.latestSigninVisitorMessage}}</p>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table *ngIf="isData; else noRecord" id="export-visitors-table" datatable
+                class="table table-striped table-bordered table-hover" [dtOptions]="dtOptions">
+                <thead class=" text-primary">
+                  <tr>
+                    <th *ngIf="('visitors' | permission: 'checkout') || ('visitors' | permission: 'delete')">
+                      {{websiteConstants.tableAction}}</th>
+                    <!-- <th *ngIf="currentUserRole.name=='superadmin'">{{websiteConstants.tableCompany}}</th> -->
+                    <th>{{websiteConstants.tableProfileImage}}</th>
+                    <th *ngIf="currentBranch.isGovernmentIdUpload">{{websiteConstants.tableGovernmentId}}</th>
+                    <th *ngIf="currentBranch.isItemImageUpload">{{websiteConstants.tableItemImage}}</th>
+                    <th>{{websiteConstants.tableApprovalStatus}}</th>
+                    <th>{{websiteConstants.tableWhomToMeet}}</th>
+                    <th>{{websiteConstants.tableCheckInTime}}</th>
+                    <th>{{websiteConstants.tableCheckInDate}}</th>
+                    <th>{{websiteConstants.tableCheckOutDate}}</th>
+                    <th>{{websiteConstants.tableCheckOutTime}}</th>
+                    <th>{{websiteConstants.tableName}}</th>
+                    <th>{{websiteConstants.tableCompanyFrom}}</th>
+                    <th>{{websiteConstants.tableContact}}</th>
+                    <th>{{websiteConstants.tableEmail}}</th>
+                    <th>{{websiteConstants.tablePreApproved}}</th>
+                    <th>{{websiteConstants.tablePreApprovedDate}}</th>
+                    <th>{{websiteConstants.tableVisitorVisited}}</th>
+                    <th>{{websiteConstants.tableLaptopSerialNumber}}</th>
+                    <!-- <th>{{websiteConstants.tableVisitorCategory}}</th> -->
+
+                  </tr>
+                </thead>
+                <tbody>
+                  <ng-container *ngFor="let visitor of visitors; let i = index">
+                    <tr>
+                      <td class="td-actions text-left"
+                        *ngIf="('visitors' | permission: 'checkout') || ('visitors' | permission: 'delete')">
+                        <button mat-raised-button="" type="button" (click)="print(visitor._id)"
+                          class="mat-raised-button mat-button-base btn btn-primary mr-1" data-toggle="tooltip"
+                          data-placement="top" title="Print Pass">
+                          <span class="mat-button-wrapper">
+                            <i class="material-icons">print</i>
+                          </span>
+                        </button>
+                        <button mat-raised-button="" type="button" (click)="detail(visitor)"
+                          class="mat-raised-button mat-button-base btn btn-info mr-1" data-toggle="tooltip"
+                          data-placement="top" title="View Detail">
+                          <span class="mat-button-wrapper">
+                            <i class="material-icons">visibility</i>
+                          </span>
+                        </button>
+                        <!-- <button mat-raised-button="" *ngIf=" 'visitors' | permission: 'delete'" type="button"
+                          (click)="delete(visitor._id, i)" class="mat-raised-button mat-button-base btn btn-danger mr-1"
+                          data-toggle="tooltip" data-placement="top" title="Delete">
+                          <span class="mat-button-wrapper">
+                            <i class="material-icons">close</i></span>
+                        </button> -->
+                        <button mat-raised-button="" *ngIf="!visitor.signOut && 'visitors' | permission: 'checkout'"
+                          type="button" (click)="signOut(visitor._id, visitor)"
+                          class="mat-raised-button mat-button-base btn btn-warning mr-1" data-toggle="tooltip"
+                          data-placement="top" title="Force Signout">
+                          <span class="mat-button-wrapper">
+                            <i class="material-icons">arrow_forward</i>
+                          </span>
+                        </button>
+                      </td>
+                      <!-- <td *ngIf="currentUserRole.name=='superadmin'">{{visitor.company ? visitor.company.name : ''}}
+                      </td> -->
+                      <!-- <td>{{visitor.signIn | date}}</td>
+                      <td>{{visitor.signIn | date: 'shortTime'}}</td> -->
+                      <td><a target="_blank" [href]="visitor.profileImagePath"><img width="100px" height="100px"
+                            [src]="visitor.profileImagePath"></a></td>
+                      <td *ngIf="currentBranch.isGovernmentIdUpload"><a target="_blank"
+                          [href]="visitor.governmentIdUploadedImagePath"><img width="100px"
+                            *ngIf="visitor.governmentIdUploadedImagePath" height="100px"
+                            [src]="visitor.governmentIdUploadedImagePath"></a></td>
+                      <td *ngIf="currentBranch.isItemImageUpload">
+                        <a target="_blank" [href]="visitor.itemImageUploadedPath">
+                          <img width="100px" *ngIf="visitor.itemImageUploadedPath" height="100px"
+                            [src]="visitor.itemImageUploadedPath">
+                        </a>
+                      </td>
+                      <td>
+                        <ng-container *ngIf="visitor.approvalStatus=='approved'; then approved else disapproved">
+                        </ng-container>
+                        <ng-template #approved><span class="bg-success text-light">{{visitor.approvalStatus |
+                            titlecase}}</span>
+                        </ng-template>
+                        <ng-template #disapproved>
+                          <ng-container *ngIf="visitor.approvalStatus=='disapproved'; then disapproved else pending">
+                          </ng-container>
+                          <ng-template #disapproved><span class="text-light">{{visitor.approvalStatus |
+                              titlecase}}</span></ng-template>
+                          <ng-template #pending><span class="bg-pending">Pending</span></ng-template>
+                        </ng-template>
+                      </td>
+                      <td>
+                        {{visitor.whomToMeet ? getFullName(visitor.whomToMeet.firstname , visitor.whomToMeet.lastname) :
+                        ''}}
+                      </td>
+                      <td *ngIf="visitor.signIn">{{visitor.signIn | date}}</td>
+                      <td *ngIf="visitor.signIn">{{visitor.signIn | date: 'shortTime'}}</td>
+                      <td *ngIf="!visitor.signIn"><span>Not Check-in</span>
+                      <td *ngIf="!visitor.signIn"><span>Not Check-in</span>
+
+                      <td *ngIf="visitor.signOut">{{visitor.signOut | date}}</td>
+                      <td *ngIf="visitor.signOut">{{visitor.signOut | date: 'shortTime'}}</td>
+                      <td *ngIf="!visitor.signOut"><span>Not Check-out</span>
+                      <td *ngIf="!visitor.signOut"><span>Not Check-out</span>
+                      </td>
+                      <td>{{visitor.name}}</td>
+                      <td>{{visitor.companyFrom}}</td>
+                      <td>{{visitor.contact}}</td>
+                      <td>{{visitor.email}}</td>
+                      <td>{{visitor.isPreApproved}}</td>
+                      <td>{{visitor.preApprovedDate}}</td>
+                      <td>{{visitor.isVisitorVisited}}</td>
+                      <td>{{visitor.serialNumber}}</td>
+                      <!-- <td *ngIf="visitor.visitorCategory && visitor.visitorCategory!==null; else noVisitorCategory">
+                        {{ visitor.visitorCategory.name}}</td>
+                      <ng-template #noVisitorCategory>
+                        <td></td>
+                      </ng-template> -->
+
+                    </tr>
+                  </ng-container>
+                </tbody>
+              </table>
+              <ng-template #noRecord>
+                <div class="text-center font-weight-bold">{{websiteConstants.noRecordFound}}</div>
+              </ng-template>
+            </div>
+          </div>
+          <!-- The Modal -->
+          <div class="modal" id="myModal" [style.display]="showVisitorDetailModal ? 'block' : 'none'">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <app-visitor-detail *ngIf="visitorDetail" (closeModel)="closePop($event)" [data]="visitorDetail">
+                </app-visitor-detail>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

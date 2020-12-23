@@ -1,0 +1,141 @@
+<!-- <div class="logo">
+    <a *ngIf="currentUserRole.name=='superadmin' ; else otherUserCompany" [routerLink]="'/company/list'"
+        class="simple-text">
+        <div *ngIf="currentUserCompany.logo && currentUserCompany.logo!==null" class="logo-img">
+            <img [src]="currentUserCompany.logo" [title]="currentUserCompany.name" [alt]="currentUserCompany.name" />
+        </div>
+        <p *ngIf="!currentUserCompany.logo">
+            {{currentUserCompany.name}}
+        </p>
+    </a>
+    <ng-template #otherUserCompany>
+        <a [routerLink]="'/'" class="simple-text">
+            <div *ngIf="currentUserCompany.logo && currentUserCompany.logo!==null" class="logo-img">
+                <img [src]="currentUserCompany.logo" [title]="currentUserCompany.name"
+                    [alt]="currentUserCompany.name" />
+            </div>
+            <p *ngIf="!currentUserCompany.logo">
+                {{currentUserCompany.name}}
+            </p>
+        </a>
+    </ng-template>
+</div> -->
+<nav id="sidebar">
+    <div class="p-2 pt-0">
+        <a *ngIf="currentUserCompany.logo && currentUserCompany.logo!==null" class="d-flex">
+            <img class="img-new logo-new rounded-circle" [src]="currentUserCompany.logo" [alt]="currentUserCompany.name"
+                [title]="currentUserCompany.name" />
+        </a>
+        <div *ngIf="!currentUserCompany.logo" class="logo">
+            <div class="simple-text">
+                {{currentUserCompany.name}}
+            </div>
+        </div>
+    </div>
+</nav>
+<div class="sidebar-wrapper">
+    <div *ngIf="isMobileMenu()">
+        <!-- <form class="navbar-form">
+            <span class="bmd-form-group">
+                <div class="input-group no-border">
+                    <input type="text" value="" class="form-control" placeholder="Search...">
+                    <button mat-raised-button type="submit" class="btn btn-white btn-round btn-just-icon">
+                        <i class="material-icons">search</i>
+                        <div class="ripple-container"></div>
+                    </button>
+                </div>
+            </span>
+        </form> -->
+        <ul class="nav navbar-nav nav-mobile-menu">
+            <!-- <li class="nav-item">
+                <a class="nav-link" href="javascript:void(0)">
+                    <i class="material-icons">dashboard</i>
+                    <p>
+                        <span class="d-lg-none d-md-block">Stats</span>
+                    </p>
+                </a>
+            </li> -->
+            <!-- <li class="nav-item dropdown">
+                <a class="nav-link" href="javascript:void(0)" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    <i class="material-icons">notifications</i>
+                    <span class="notification">5</span>
+                    <p>
+                        <span class="d-lg-none d-md-block">Some Actions</span>
+                    </p>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                    <a class="dropdown-item" href="#">Mike John responded to your email</a>
+                    <a class="dropdown-item" href="#">You have 5 new tasks</a>
+                    <a class="dropdown-item" href="#">You're now friend with Andrew</a>
+                    <a class="dropdown-item" href="#">Another Notification</a>
+                    <a class="dropdown-item" href="#">Another One</a>
+                </div>
+            </li> -->
+            <li class="nav-item dropdown">
+                <a class="nav-link" href="javascript:void(0)" id="navbarDropdownMenuLink" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false">
+                    <i class="material-icons">person</i>
+                    <p>
+                        <span class="d-lg-none d-md-block">Account</span>
+                    </p>
+                </a>
+                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdownMenuLink">
+                    <a *ngIf="currentUserRole.name !== 'superadmin'" class="dropdown-item"
+                        [routerLink]="'/'">Dashboard</a>
+                    <a class="dropdown-item" [routerLink]="['/user/profile']">Edit Profile</a>
+                    <a class="dropdown-item" *ngIf=" 'companies' | permission: 'profile'"
+                        [routerLink]="['/company/profile']">Company Profile</a>
+                    <a class="dropdown-item" (click)="logout()">Log Out</a>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div>
+        <ul class="nav">
+            <ng-container *ngFor="let menuItem of menuItems">
+                <li *ngIf="menuItem.submenus && menuItem.submenus.length; else noSubItems" routerLinkActive="active"
+                    class="{{menuItem.class}} nav-item">
+                    <a class="nav-link collapsed" data-toggle="collapse" [href]="'#'+menuItem.name"
+                        aria-expanded="false">
+                        <i class="material-icons">{{menuItem.icon}}</i>
+                        <p>{{menuItem.displayName}} <b class="caret"></b></p>
+                    </a>
+                    <ul class="collapse nav" [id]="menuItem.name">
+                        <li *ngFor="let subMenuItem of menuItem.submenus" routerlinkactive="active" class="nav-item">
+                            <a class="nav-link" [routerLink]="[subMenuItem.path]">
+                                <p>{{subMenuItem.displayName}}</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <ng-template #noSubItems>
+                    <li routerLinkActive="active" class="{{menuItem.class}} nav-item">
+                        <a class="nav-link" [routerLink]="[menuItem.path]">
+                            <i class="material-icons">{{menuItem.icon}}</i>
+                            <p>{{menuItem.displayName}}</p>
+                        </a>
+                    </li>
+                </ng-template>
+            </ng-container>
+        </ul>
+
+        <!-- <div class="holder mt-5">
+            <ul id="ticker01">
+                <h6>New Features</h6>
+                <li>UI updated</li>
+                <li>Listing Features</li>
+                <li><span>07/04/2020</span><a href="#"> The code that you want to run</a></li>
+                <li><span>07/04/2020</span><a href="#"> Inside of which is the code that you want to run</a></li>
+                <li><span>07/04/2020</span><a href="#"> Right when the page is loaded</a></li>
+                <li><span>08/04/2020</span><a href="#"> Problematically, however, the Javascript code</a></li>
+                <li><span>08/04/2020</span><a href="#"> The first thing that most Javascript programmers</a></li>
+                <li><span>08/04/2020</span><a href="#"> End up doing is adding some code</a></li>
+                <li><span>08/04/2020</span><a href="#"> The code that you want to run</a></li>
+                <li><span>09/04/2020</span><a href="#"> Inside of which is the code that you want to run</a></li>
+                <li><span>09/04/2020</span><a href="#"> Right when the page is loaded</a></li>
+                <li><span>09/04/2020</span><a href="#"> Problematically, however, the Javascript code</a></li>
+            </ul>
+        </div> -->
+    </div>
+</div>

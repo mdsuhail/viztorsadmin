@@ -1,0 +1,88 @@
+<ngx-spinner>
+  <p style="font-size: 20px; color: white">{{loaderSpinnerMessage}}</p>
+</ngx-spinner>
+<div class="main-content mt-4">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-info">
+            <button type="button" class="btn-xs float-right" data-toggle="tooltip" data-placement="top" title="Back"
+              (click)="backClicked()">
+              <i class="material-icons">arrow_back</i>
+            </button>
+            <h4 class="card-title ">{{websiteConstants.newEmployee}}</h4>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+              <div class="form-row">
+                <div class="form-group col-6">
+                  <label for="status">Status</label>
+                  <select formControlName="active" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f.active.errors }">
+                    <option value="">Please select</option>
+                    <option value="true">Active</option>
+                    <option value="false">Deactive</option>
+                  </select>
+                  <div *ngIf="submitted && f.active.errors" class="invalid-feedback">
+                    <div *ngIf="f.active.errors.required">Status is required</div>
+                  </div>
+                </div>
+                <div class="form-group col-6">
+                  <label for="department">Department</label>
+                  <select formControlName="department" class="form-control">
+                    <option value="">Please select</option>
+                    <ng-container *ngFor="let department of departments">
+                      <option value="{{department._id}}">{{department.name}}</option>
+                    </ng-container>
+                  </select>
+                </div>
+                <div class="form-group col-6">
+                  <label>First Name</label>
+                  <input type="text" formControlName="firstname" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f.firstname.errors }">
+                  <div *ngIf="submitted && f.firstname.errors" class="invalid-feedback">
+                    <div *ngIf="f.firstname.errors.required">First Name is required</div>
+                  </div>
+                </div>
+                <div class="form-group col-6">
+                  <label>Last Name</label>
+                  <input type="text" formControlName="lastname" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f.lastname.errors }" />
+                  <div *ngIf="submitted && f.lastname.errors" class="invalid-feedback">
+                    <div *ngIf="f.lastname.errors.required">Last Name is required</div>
+                  </div>
+                </div>
+                <div class="form-group col-6">
+                  <label>Email</label>
+                  <input type="text" formControlName="email" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
+                  <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                    <div *ngIf="f.email.errors.required">Email is required</div>
+                    <div *ngIf="f.email.errors.email">Email must be a valid email address</div>
+                  </div>
+                </div>
+                <div class="form-group col-6">
+                  <label>Contact</label>
+                  <input type="text" formControlName="contact" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f.contact.errors }" />
+                  <div *ngIf="submitted && f.contact.errors" class="invalid-feedback">
+                    <div *ngIf="f.contact.errors.required">Contact is required</div>
+                  </div>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-12">
+                  <button type="reset" class="btn btn-secondary float-right" *ngIf=" 'employees' | permission: 'create'"
+                    (click)="onReset()">{{websiteConstants.buttonClear}}</button>
+                  <button class="btn btn-info float-right"
+                    *ngIf=" 'employees' | permission: 'create'">{{websiteConstants.buttonSubmit}}</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

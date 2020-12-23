@@ -1,0 +1,233 @@
+<ngx-spinner>
+    <p style="font-size: 20px; color: white">{{loaderSpinnerMessage}}</p>
+</ngx-spinner>
+<div class="main-content">
+    <div class="container-fluid" *ngIf="currentUserRole.name==='companyadmin'">
+        <!-- <div class="row mb-5">
+            <div *ngFor="let branch of branches" class="col-lg-3 col-md-6 col-sm-6">
+                <div class="card">
+                    <img class="card-img-top" src="./assets/img/branch-dummy.jpg" alt="{{branch.name}}"
+                        title="{{branch.name}}">
+                    <div class="card-body">
+                        <h5 class="card-title">{{branch.name}}</h5>
+                        <p class="card-text">{{branch.email}}</p>
+                        <p class="card-text">{{branch.contact}}</p>
+                        <p class="card-text">Status:
+                            <strong>{{branch.active && branch.active!==null ? 'Active' : 'Deactive'}}</strong>
+                        </p>
+                        <button id="{{branch._id}}" (click)="getBranchDashboard(branch, $event)"
+                            class="btn btn-info btn-sm">View Dashboard</button>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+        <div id="myCarousel" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                <ng-template ngFor let-item [ngForOf]="branches" let-i="index">
+                    <div [ngClass]="i===0 ? 'carousel-item active' :'carousel-item'" *ngIf=" i % 4 === 0 ">
+                        <div class=" row">
+                            <div class="col-lg-3" *ngFor="let branch of branches.slice(i,i+4)">
+                                <div class="card">
+                                    <img class="card-img-top" src="./assets/img/branch-dummy.jpg" alt="{{branch.name}}"
+                                        title="{{branch.name}}">
+                                    <div class="card-body">
+                                        <h5 class="card-title">{{branch.name}}</h5>
+                                        <p class="card-text">{{branch.email}}</p>
+                                        <p class="card-text">{{branch.contact}}</p>
+                                        <p class="card-text">Status:
+                                            <strong>{{branch.active && branch.active!==null ? 'Active' :
+                                                'Deactive'}}</strong>
+                                        </p>
+                                        <button id="{{branch._id}}" (click)="getBranchDashboard(branch, $event)"
+                                            class="btn btn-info btn-sm">View Dashboard</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-template>
+            </div>
+            <a class="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </div>
+    </div>
+    <div id="showDashboard" class="container-fluid" *ngIf="showDashboard">
+        <div class="row">
+            <div
+                [ngClass]="[currentUserRole.name!=='employee' ? 'col-lg-3 col-md-6 col-sm-6' : 'col-lg-6 col-md-6 col-sm-6']">
+                <div class="card card-stats">
+                    <div class="card-header card-header-success card-header-icon">
+                        <div class="card-icon">
+                            <i class="material-icons">person</i>
+                        </div>
+                        <p class="card-category">{{websiteConstants.signinVisitor}}</p>
+                        <h3 class="card-title">{{counterData.totalSigninVisitors}}/{{counterData.totalVisitors}}
+                        </h3>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats" *ngIf="showViewAll">
+                            <a [routerLink]="['/visitor/list']"> {{websiteConstants.viewAll}} </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div
+                [ngClass]="[currentUserRole.name!=='employee' ? 'col-lg-3 col-md-6 col-sm-6' : 'col-lg-6 col-md-6 col-sm-6']">
+                <div class="card card-stats">
+                    <div class="card-header card-header-danger card-header-icon">
+                        <div class="card-icon">
+                            <i class="material-icons">person</i>
+                        </div>
+                        <p class="card-category">{{websiteConstants.signoutVisitor}}</p>
+                        <h3 class="card-title">{{counterData.totalSignoutVisitors}}/{{counterData.totalVisitors}}
+                        </h3>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats" *ngIf="showViewAll">
+                            <a [routerLink]="['/visitor/list']"> {{websiteConstants.viewAll}} </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6" *ngIf="currentUserRole.name!=='employee'">
+                <div class="card card-stats">
+                    <div class="card-header card-header-warning card-header-icon">
+                        <div class="card-icon">
+                            <i class="material-icons">store</i>
+                        </div>
+                        <p class="card-category">{{websiteConstants.departments}}</p>
+                        <h3 class="card-title">{{counterData.totalDepartments}}</h3>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats" *ngIf="showViewAll">
+                            <a [routerLink]="['/department/list']"> {{websiteConstants.viewAll}} </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6" *ngIf="currentUserRole.name!=='employee'">
+                <div class="card card-stats">
+                    <div class="card-header card-header-info card-header-icon">
+                        <div class="card-icon">
+                            <i class="material-icons">person_pin</i>
+                        </div>
+                        <p class="card-category">{{websiteConstants.employees}}</p>
+                        <h3 class="card-title">{{counterData.totalEmployees}}</h3>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats" *ngIf="showViewAll">
+                            <a [routerLink]="['/employee/list']"> {{websiteConstants.viewAll}} </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card card-chart">
+                    <div class="card-header card-header-success">
+                        <!-- <div class="ct-chart" id="signinChart"></div> -->
+                        <canvas id="signinChart" width="700" height="300"></canvas>
+                    </div>
+                    <div class="card-body">
+                        <form [formGroup]="signinDateRangeForm" (ngSubmit)="onSubmitSigninDateRange()">
+                            <div class="form-row">
+                                <div class="form-group col-4">
+                                    <input type="text" placeholder="From" onfocus="(this.type='date')"
+                                        onfocusout="(this.type='text')" formControlName="start" class="form-control"
+                                        [ngClass]="{ 'is-invalid': submitted && f.start.errors }" />
+                                    <div *ngIf="submitted && f.start.errors" class="invalid-feedback">
+                                        <div *ngIf="f.start.errors.required">From date select</div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-4">
+                                    <input type="text" placeholder="To" onfocus="(this.type='date')"
+                                        onfocusout="(this.type='text')" formControlName="end" class="form-control"
+                                        [ngClass]="{ 'is-invalid': submitted && f.end.errors }" />
+                                    <div *ngIf="submitted && f.end.errors" class="invalid-feedback">
+                                        <div *ngIf="f.end.errors.required">To date select</div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-2">
+                                    <!-- <button class="btn btn-info btn-sm float-right form-control">{{websiteConstants.buttonSearch}}</button> -->
+                                    <button class="btn btn-info btn-sm form-control" data-toggle="tooltip"
+                                        data-placement="top" title="Search"><i
+                                            class="material-icons">search</i></button>
+                                </div>
+                                <div class="form-group col-2">
+                                    <!-- <button type="reset" (click)="onResetSigninDateRangeForm()" class="btn btn-info btn-sm float-right form-control">{{websiteConstants.buttonRefresh}}</button> -->
+                                    <button type="reset" (click)="onResetSigninDateRangeForm()" data-toggle="tooltip"
+                                        data-placement="top" title="Refresh" class="btn btn-info btn-sm form-control"><i
+                                            class="material-icons">refresh</i></button>
+                                </div>
+                            </div>
+                        </form>
+                        <h4 class="card-title">{{websiteConstants.signinVisitor}}</h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card card-chart">
+                    <div class="card-header card-header-danger">
+                        <!-- <div class="ct-chart" id="signoutChart"></div> -->
+                        <canvas id="signoutChart" width="700" height="300"></canvas>
+                    </div>
+                    <div class="card-body">
+                        <form [formGroup]="signoutDateRangeForm" (ngSubmit)="onSubmitSignoutDateRange()">
+                            <div class="form-row">
+                                <div class="form-group col-4">
+                                    <input type="text" placeholder="From" onfocus="(this.type='date')"
+                                        onfocusout="(this.type='text')" formControlName="start" class="form-control"
+                                        [ngClass]="{ 'is-invalid': submitted && g.start.errors }" />
+                                    <div *ngIf="submitted && g.start.errors" class="invalid-feedback">
+                                        <div *ngIf="g.start.errors.required">From date select</div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-4">
+                                    <input type="text" placeholder="To" onfocus="(this.type='date')"
+                                        onfocusout="(this.type='text')" formControlName="end" class="form-control"
+                                        [ngClass]="{ 'is-invalid': submitted && g.end.errors }" />
+                                    <div *ngIf="submitted && g.end.errors" class="invalid-feedback">
+                                        <div *ngIf="g.end.errors.required">To date select</div>
+                                    </div>
+                                </div>
+                                <div class="form-group col-2">
+                                    <!-- <button class="btn btn-info btn-sm float-right form-control">{{websiteConstants.buttonSearch}}</button> -->
+                                    <button class="btn btn-info btn-sm form-control" data-toggle="tooltip"
+                                        data-placement="top" title="Search"><i
+                                            class="material-icons">search</i></button>
+                                </div>
+                                <div class="form-group col-2">
+                                    <button type="reset" (click)="onResetSignoutDateRangeForm()"
+                                        class="btn btn-info btn-sm form-control" data-toggle="tooltip"
+                                        data-placement="top" title="Refresh"><i
+                                            class="material-icons">refresh</i></button>
+                                </div>
+                            </div>
+                        </form>
+                        <h4 class="card-title">{{websiteConstants.signoutVisitor}}</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-6 col-md-6">
+                <app-visitor-list-dashboard [latestSigninDetail]="latestSigninDetail"></app-visitor-list-dashboard>
+            </div>
+            <div class="col-lg-6 col-md-6">
+                <app-visitor-list-dashboard [latestSignoutDetail]="latestSignoutDetail">
+                </app-visitor-list-dashboard>
+            </div>
+            <div class="col-lg-6 col-md-6">
+                <app-visitor-list-dashboard [latestPreApprovedVisitorToday]="latestPreApprovedVisitorToday">
+                </app-visitor-list-dashboard>
+            </div>
+        </div>
+    </div>
+</div>

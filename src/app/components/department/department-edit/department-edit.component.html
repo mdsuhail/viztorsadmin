@@ -1,0 +1,58 @@
+<ngx-spinner>
+  <p style="font-size: 20px; color: white">{{loaderSpinnerMessage}}</p>
+</ngx-spinner>
+<div class="main-content mt-4">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-info">
+            <button type="button" class="btn-xs float-right" data-toggle="tooltip" data-placement="top" title="Back"
+              (click)="backClicked()">
+              <i class="material-icons">arrow_back</i>
+            </button>
+            <h4 class="card-title ">{{websiteConstants.editDepartment}}</h4>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+              <div class="form-row">
+                <div class="form-group col-6">
+                  <label for="status">Status</label>
+                  <select formControlName="active" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f.active.errors }">
+                    <option value="">Please select</option>
+                    <option value="true">Active</option>
+                    <option value="false">Deactive</option>
+                  </select>
+                  <div *ngIf="submitted && f.active.errors" class="invalid-feedback">
+                    <div *ngIf="f.active.errors.required">Status is required</div>
+                  </div>
+                </div>
+                <div class="form-group col-6">
+                  <label>Name</label>
+                  <input type="text" formControlName="name" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f.name.errors }" />
+                  <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                    <div *ngIf="f.name.errors.required">Name is required</div>
+                  </div>
+                </div>
+                <div class="form-group col-12">
+                  <label>About</label>
+                  <textarea class="form-control" formControlName="description" rows="3"></textarea>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group col-12">
+                  <button type="reset" class="btn btn-secondary float-right" *ngIf=" 'departments' | permission: 'create'"
+                    (click)="onReset()">{{websiteConstants.buttonClear}}</button>
+                  <button class="btn btn-info float-right"
+                    *ngIf=" 'departments' | permission: 'create'">{{websiteConstants.buttonSubmit}}</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

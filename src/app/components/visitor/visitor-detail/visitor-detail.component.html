@@ -1,0 +1,68 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row" id="dataToPrint">
+            <div class="col-md-12">
+                <div class="card card-profile">
+                    <div class=" card-avatar">
+                        <a href="javascript:void(0)">
+                            <img class="img" [src]="data.profileImagePath" />
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group col-6">
+                                <label>Name: </label>
+                                {{ data.name ? data.name : 'NA'}}
+                            </div>
+                            <div class="form-group col-6">
+                                <label>Email: </label>
+                                {{ data.email ? data.email : 'NA'}}
+                            </div>
+                            <div class="form-group col-6">
+                                <label>Contact: </label>
+                                {{ data.contact ? data.contact : 'NA'}}
+                            </div>
+                            <div class="form-group col-6">
+                                <label>Company from: </label>
+                                {{ data.companyFrom ? data.companyFrom : 'NA'}}
+                            </div>
+                            <div class="form-group col-6">
+                                <label>Host: </label>
+                                {{ data.whomToMeet ? data.whomToMeet.firstname + ' ' + data.whomToMeet.lastname : 'NA'}}
+                            </div>
+                            <div class="form-group col-6">
+                                <label>Checkin Date: </label>
+                                {{ data.createdAt ? (data.signIn | date: 'mediumDate') : 'NA'}}
+                            </div>
+                            <div class="form-group col-6">
+                                <label>Checkin Time: </label>
+                                {{ data.createdAt ? (data.signIn | date: 'shortTime') : 'NA'}}
+                            </div>
+                            <div class="form-group col-6">
+                                <label>Checkout Date: </label>
+                                {{ data.signOut ? (data.signOut | date: 'mediumDate') : 'NA'}}
+                            </div>
+                            <div class="form-group col-6">
+                                <label>Checkout Time: </label>
+                                {{ data.signOut ? (data.signOut | date: 'shortTime') : 'NA'}}
+                            </div>
+                            <div class="form-group col-6">
+                                <label>Laptop Serial Number: </label>
+                                {{ data.serialNumber ? data.serialNumber : 'NA'}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-row">
+                    <div class="form-group col-12">
+                        <button class="btn btn-info float-right hidden-print" (click)="closePopup()">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

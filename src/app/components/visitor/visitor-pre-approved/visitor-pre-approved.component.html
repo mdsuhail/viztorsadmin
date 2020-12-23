@@ -1,0 +1,139 @@
+<ngx-spinner>
+  <p style="font-size: 20px; color: white">{{loaderSpinnerMessage}}</p>
+</ngx-spinner>
+<div class="main-content mt-4">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header card-header-info">
+            <button type="button" class="btn-xs float-right" data-toggle="tooltip" data-placement="top" title="Back"
+              (click)="backClicked()">
+              <i class="material-icons">arrow_back</i>
+            </button>
+            <h4 class="card-title ">{{websiteConstants.visitorPreApproved}}</h4>
+          </div>
+          <div class="card-body">
+            <form [formGroup]="form" (ngSubmit)="onSubmit()">
+              <div class="form-row">
+                <div class="form-group col-6">
+                  <label for="status">Status</label>
+                  <select formControlName="active" [attr.disabled]="true" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f.active.errors }">
+                    <option value="">Please select</option>
+                    <option value="true">Active</option>
+                    <option value="false">Cancel</option>
+                  </select>
+                  <div *ngIf="submitted && f.active.errors" class="invalid-feedback">
+                    <div *ngIf="f.active.errors.required">Status is required</div>
+                  </div>
+                </div>
+                <div class="form-group col-6">
+                  <label>Contact (10 digits)</label>
+                  <div class="input-group">
+                    <input type="text" formControlName="contact"
+                      (keyup)="getVisitorProfileByContact(form.value.contact, false)" class="form-control"
+                      [ngClass]="{ 'is-invalid': submitted && f.contact.errors }" />
+                    <div class="input-group-append">
+                      <span class="input-group-text">
+                        <button type="button" (click)="getVisitorProfileByContact(form.value.contact, true)"
+                          class="btn btn-primary btn-sm">Check</button>
+                      </span>
+                    </div>
+                    <div *ngIf="submitted && f.contact.errors" class="invalid-feedback">
+                      <div *ngIf="f.contact.errors.required">Contact is required</div>
+                      <div *ngIf="f.contact.errors.minlength">Contact must be 10 digits</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group col-6">
+                  <label>Name</label>
+                  <input type="text" formControlName="name" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f.name.errors }" />
+                  <div *ngIf="submitted && f.name.errors" class="invalid-feedback">
+                    <div *ngIf="f.name.errors.required">Name is required</div>
+                  </div>
+                </div>
+                <div class="form-group col-6">
+                  <label>Email</label>
+                  <input type="text" formControlName="email" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f.email.errors }" />
+                  <div *ngIf="submitted && f.email.errors" class="invalid-feedback">
+                    <div *ngIf="f.email.errors.required">Email is required</div>
+                  </div>
+                </div>
+                <div class="form-group col-6">
+                  <label>Company From</label>
+                  <input type="text" formControlName="companyFrom" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f.companyFrom.errors }" />
+                  <div *ngIf="submitted && f.companyFrom.errors" class="invalid-feedback">
+                    <div *ngIf="f.companyFrom.errors.required">Visitor company name is required</div>
+                  </div>
+                </div>
+                <div class="form-group col-6">
+                  <label>Pre approved date</label>
+                  <input type="date" [min]="todayDate" formControlName="preApprovedDate" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f.preApprovedDate.errors }" />
+                  <div *ngIf="submitted && f.preApprovedDate.errors" class="invalid-feedback">
+                    <div *ngIf="f.preApprovedDate.errors.required">Select pre-approved date</div>
+                  </div>
+                </div>
+                <!-- <div class="form-group col-6">
+                  <label>Message</label>
+                  <textarea formControlName="message" class="form-control"></textarea>
+                </div> -->
+                <div class="form-group col-3 pt-4">
+                  <div class="btn btn-default form-control">
+                    <label>Profile Image Upload</label>
+                    <input type="file" accept="image/*" id="file" class="form-control"
+                      [ngClass]="{ 'is-invalid': submitted && f.profileImage.errors }"
+                      (change)="onFileChange($event)" />
+                    <div *ngIf="submitted && f.profileImage.errors" class="invalid-feedback">
+                      <div *ngIf="f.profileImage.errors.required">Please select profile image</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-group col-3" *ngIf="form.value.profileImage && form.value.profileImage!=='NA'">
+                  <img class="show-snapshot" [src]="form.value.profileImage" width="67px" height="65px" />
+                </div>
+                <div class="form-group col-3" *ngIf="form.value.profileImagePath && profileImagePath">
+                  <img class="show-snapshot" [src]="profileImagePath" width="67px" height="65px" />
+                </div>
+
+                <!-- <div class="form-group col-3 pt-4">
+                  <div class="btn btn-default form-control">
+                    <label>Government Id Upload</label>
+                    <input type="file" accept="image/*" id="file" class="form-control"
+                      (change)="onFileChange($event)" />
+                  </div>
+                </div>
+                <div *ngIf="form.value.governmentIdUploadedImage" class="form-group col-3">
+                  <img class="show-snapshot" [src]="form.value.governmentIdUploadedImage" width="67px" height="65px" />
+                </div> -->
+
+
+                <!-- <div class="form-group col-6">
+                  <label>Upload Profile Image</label>
+                  <input type="file" accept="image/*" id="file" class="form-control"
+                    [ngClass]="{ 'is-invalid': submitted && f.profileImage.errors }" (change)="onFileChange($event)" />
+                  <div *ngIf="submitted && f.profileImage.errors" class="invalid-feedback">
+                    <div *ngIf="f.profileImage.errors.required">PLease select profile image</div>
+                  </div>
+                </div> -->
+
+
+              </div>
+              <div class="form-row">
+                <div class="form-group col-12">
+                  <button type="reset" class="btn btn-secondary float-right"
+                    (click)="onReset()">{{websiteConstants.buttonClear}}</button>
+                  <button class="btn btn-info float-right">{{websiteConstants.buttonSubmit}}</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
